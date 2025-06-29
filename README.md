@@ -48,3 +48,35 @@ LIMS-GT/
 ├── docker-compose.yml
 ├── LICENSE
 └── README.md
+---
+
+## 👥 Contributors
+
+Developed and maintained by **Henry Mwaka, PhD (Bioscience Engineering)**  
+GitHub: [@henrymwaka](https://github.com/henrymwaka)
+
+---
+
+## 📄 License
+
+This project is licensed under the **Apache 2.0 License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🚧 Status
+
+🚀 Initial system design complete.  
+🔧 Model and API development in progress.  
+📅 Alpha release expected: Q4 2025
+
+---
+
+## 🤝 Collaboration
+
+We welcome collaboration with:
+
+- University research groups  
+- Molecular biology teaching labs  
+- Developers interested in science infrastructure  
+
+Please open an issue or reach out via GitHub.
