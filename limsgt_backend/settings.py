@@ -1,18 +1,20 @@
 from pathlib import Path
 import os
-from datetime import timedelta
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # ─── Base Directory ──────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ─── Security Settings ───────────────────────────────────────────
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-_wq)j3!=2pv&j88$og22u2s74n&6i%bmcqs_dt7#028jn*wc5l')
-DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',') if not DEBUG else ['*']
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'unsafe-default-key')
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ['true', '1']
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if not DEBUG else ['*']
 
 # ─── Installed Applications ──────────────────────────────────────
 INSTALLED_APPS = [
-    # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -20,18 +22,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third-party apps
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
+    'drf_yasg',
 
-    # Local apps
     'labcore',
 ]
 
 # ─── Middleware Stack ────────────────────────────────────────────
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Always place first
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -41,14 +43,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ─── URL Configuration ───────────────────────────────────────────
+# ─── URL & WSGI ──────────────────────────────────────────────────
 ROOT_URLCONF = 'limsgt_backend.urls'
+WSGI_APPLICATION = 'limsgt_backend.wsgi.application'
 
-# ─── Templates ───────────────────────────────────────────────────
+# ─── Template Configuration ──────────────────────────────────────
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Custom templates folder
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -61,9 +64,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'limsgt_backend.wsgi.application'
-
-# ─── REST Framework Settings ─────────────────────────────────────
+# ─── REST Framework Configuration ────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -81,17 +82,24 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser',
     ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
 }
 
 # ─── Database Configuration ──────────────────────────────────────
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('DB_USER', ''),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', ''),
     }
 }
 
-# ─── Password Validation ─────────────────────────────────────────
+# ─── Password Validators ─────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -99,13 +107,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# ─── Internationalization ────────────────────────────────────────
+# ─── Localization ────────────────────────────────────────────────
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Africa/Kampala'
 USE_I18N = True
 USE_TZ = True
 
-# ─── Static and Media Files ──────────────────────────────────────
+# ─── Static & Media Files ────────────────────────────────────────
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -113,9 +121,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# ─── Misc Settings ───────────────────────────────────────────────
+# ─── Miscellaneous ───────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = True
 
-# ─── CORS Settings (Uncomment for external frontend access) ─────
-# CORS_ALLOW_ALL_ORIGINS = True
+# ─── CORS Configuration ──────────────────────────────────────────
+CORS_ALLOW_ALL_ORIGINS = DEBUG

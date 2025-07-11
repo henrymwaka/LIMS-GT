@@ -1,7 +1,5 @@
-# Create your models here.
 from django.db import models
 from django.contrib.auth.models import User
-
 
 # ──────────────── Reference Models ────────────────
 
@@ -36,7 +34,6 @@ class Primer(models.Model):
 
     def __str__(self):
         return self.name
-
 
 # ──────────────── Experimental Pipeline ────────────────
 
@@ -101,14 +98,17 @@ class PlantLine(models.Model):
 class PCRConfirmation(models.Model):
     plant_line = models.ForeignKey(PlantLine, on_delete=models.CASCADE)
     primers_used = models.ManyToManyField(Primer)
-    result = models.CharField(max_length=100, choices=[('positive', 'Positive'), ('negative', 'Negative'), ('inconclusive', 'Inconclusive')])
+    result = models.CharField(max_length=100, choices=[
+        ('positive', 'Positive'),
+        ('negative', 'Negative'),
+        ('inconclusive', 'Inconclusive')
+    ])
     gel_image = models.ImageField(upload_to='confirmations/gels/', blank=True, null=True)
     notes = models.TextField(blank=True)
     confirmed_on = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.plant_line.line_code} - {self.result}"
-
 
 # ──────────────── Protocol & Supervision ────────────────
 
